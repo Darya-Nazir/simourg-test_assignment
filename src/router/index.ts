@@ -1,16 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import HealthCheckPage from '@/pages/HealthCheckPage.vue'
+import { appRoutes } from './routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'health-check',
-      component: HealthCheckPage,
-    },
-  ],
+  routes: appRoutes,
 })
 
 export default router

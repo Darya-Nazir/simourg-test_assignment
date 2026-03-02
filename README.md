@@ -1,6 +1,12 @@
 # simourg
 
-Проект этапа 1: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend (json-server).
+Проект этапа 2: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend (json-server).
+
+## Маршруты этапа 2
+
+- `/users` - страница списка пользователей (каркас).
+- `/users/new` - страница создания пользователя (каркас).
+- `/users/:id/edit` - страница редактирования пользователя (каркас).
 
 ## Установка
 
