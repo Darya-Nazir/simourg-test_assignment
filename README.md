@@ -1,6 +1,17 @@
 # simourg
 
-Проект этапа 2: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend (json-server).
+Проект этапа 3: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend (json-server).
+
+## Что реализовано на этапе 3
+
+- Изолированный client-layer:
+  - `src/client/axios` (axios instance + interceptors),
+  - `src/client/clients/base.client.ts` (единый transport),
+  - `src/client/clients/user.client.ts` (`list/getById/create/update`),
+  - `src/client/config/endpoints.ts` (централизованные endpoints).
+- Единый формат ошибок `ApiResult<T>` + `AppError` (`src/types/api.ts`).
+- UI больше не вызывает axios напрямую (`HealthCheckPage` переведен на `healthClient`).
+- Unit-тесты client-layer на success/error и HTTP-методы.
 
 ## Маршруты этапа 2
 

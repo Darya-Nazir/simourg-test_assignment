@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import axios from 'axios'
 import { onMounted, ref } from 'vue'
+
+import { healthClient } from '@/client/clients'
 
 const healthStatus = ref('checking')
 const errorMessage = ref('')
 
 const loadHealth = async () => {
-  try {
-    const response = await axios.get<{ status: string }>('/api/health')
-    healthStatus.value = response.data.status
+  const result = await healthClient.getHealth()
+
+  if (result.data) {
+    healthStatus.value = result.data.status
     errorMessage.value = ''
-  } catch {
-    healthStatus.value = 'error'
-    errorMessage.value = 'Mock backend is unavailable'
+    return
   }
+
+  healthStatus.value = 'error'
+  errorMessage.value = result.error?.message || 'Mock backend is unavailable'
 }
 
 onMounted(loadHealth)

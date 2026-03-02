@@ -5,7 +5,24 @@
   "users": [
     {
       "id": 1,
-      "name": "stub-user"
+      "name": "Ada Lovelace",
+      "email": "ada@example.com",
+      "status": "active",
+      "createdAt": "2026-01-15T08:30:00.000Z"
+    },
+    {
+      "id": 2,
+      "name": "Grace Hopper",
+      "email": "grace@example.com",
+      "status": "active",
+      "createdAt": "2026-01-19T10:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "name": "Alan Turing",
+      "email": "alan@example.com",
+      "status": "inactive",
+      "createdAt": "2026-01-25T12:15:00.000Z"
     }
   ]
 }
