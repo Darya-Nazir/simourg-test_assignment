@@ -8,6 +8,7 @@ import type { User, UsersQuery } from '@/types/user'
 
 const DEFAULT_PAGE = 1
 const DEFAULT_LIMIT = 5
+const MOCK_SCENARIOS = new Set(['empty', 'slow', 'error', 'network'])
 
 const parsePositiveInt = (value: unknown, fallback: number): number => {
   const parsed = Number.parseInt(String(value ?? ''), 10)
@@ -22,12 +23,22 @@ const parseSearch = (value: unknown): string => {
   return value.trim()
 }
 
+const parseMockScenario = (value: unknown): UsersQuery['mock'] | undefined => {
+  if (typeof value !== 'string') {
+    return undefined
+  }
+
+  const normalized = value.trim()
+  return MOCK_SCENARIOS.has(normalized) ? (normalized as UsersQuery['mock']) : undefined
+}
+
 export const useUsersStore = defineStore('users', () => {
   const items = ref<User[]>([])
   const page = ref(DEFAULT_PAGE)
   const limit = ref(DEFAULT_LIMIT)
   const total = ref(0)
   const search = ref('')
+  const mock = ref<UsersQuery['mock']>()
 
   const isLoading = ref(false)
   const error = ref<AppError | null>(null)
@@ -38,12 +49,14 @@ export const useUsersStore = defineStore('users', () => {
     page: page.value,
     limit: limit.value,
     ...(search.value ? { search: search.value } : {}),
+    ...(mock.value ? { mock: mock.value } : {}),
   }))
 
   const applyRouteQuery = (routeQuery: LocationQuery): void => {
     page.value = parsePositiveInt(routeQuery.page, DEFAULT_PAGE)
     limit.value = parsePositiveInt(routeQuery.limit, DEFAULT_LIMIT)
     search.value = parseSearch(routeQuery.search)
+    mock.value = parseMockScenario(routeQuery.mock)
   }
 
   const setPage = (nextPage: number): void => {
@@ -57,6 +70,11 @@ export const useUsersStore = defineStore('users', () => {
 
   const setSearch = (value: string): void => {
     search.value = parseSearch(value)
+    page.value = DEFAULT_PAGE
+  }
+
+  const setMockScenario = (value: unknown): void => {
+    mock.value = parseMockScenario(value)
     page.value = DEFAULT_PAGE
   }
 
@@ -86,6 +104,7 @@ export const useUsersStore = defineStore('users', () => {
     total,
     totalPages,
     search,
+    mock,
     isLoading,
     error,
     query,
@@ -93,6 +112,7 @@ export const useUsersStore = defineStore('users', () => {
     setPage,
     setLimit,
     setSearch,
+    setMockScenario,
     fetchUsers,
   }
 })

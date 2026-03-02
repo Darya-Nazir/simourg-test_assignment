@@ -13,22 +13,24 @@ describe('users store', () => {
   it('parses route query and applies defaults for invalid values', () => {
     const store = useUsersStore()
 
-    store.applyRouteQuery({ page: '2', limit: '10', search: '  ada  ' })
+    store.applyRouteQuery({ page: '2', limit: '10', search: '  ada  ', mock: 'slow' })
 
     expect(store.page).toBe(2)
     expect(store.limit).toBe(10)
     expect(store.search).toBe('ada')
+    expect(store.mock).toBe('slow')
 
-    store.applyRouteQuery({ page: '0', limit: '-1', search: 42 as never })
+    store.applyRouteQuery({ page: '0', limit: '-1', search: 42 as never, mock: 'invalid' })
 
     expect(store.page).toBe(1)
     expect(store.limit).toBe(5)
     expect(store.search).toBe('')
+    expect(store.mock).toBeUndefined()
   })
 
   it('loads paginated users using current query state', async () => {
     const store = useUsersStore()
-    store.applyRouteQuery({ page: '3', limit: '5', search: 'grace' })
+    store.applyRouteQuery({ page: '3', limit: '5', search: 'grace', mock: 'error' })
 
     const getUsersSpy = vi.spyOn(userClient, 'getUsers').mockResolvedValue({
       data: {
@@ -52,7 +54,7 @@ describe('users store', () => {
 
     await store.fetchUsers()
 
-    expect(getUsersSpy).toHaveBeenCalledWith({ page: 3, limit: 5, search: 'grace' })
+    expect(getUsersSpy).toHaveBeenCalledWith({ page: 3, limit: 5, search: 'grace', mock: 'error' })
     expect(store.items).toHaveLength(1)
     expect(store.total).toBe(33)
     expect(store.totalPages).toBe(7)

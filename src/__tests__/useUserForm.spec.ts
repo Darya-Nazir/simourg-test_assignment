@@ -49,6 +49,9 @@ describe('useUserForm', () => {
         email: 'ada@example.com',
         status: 'active',
       }),
+      {
+        mock: undefined,
+      },
     )
   })
 
@@ -89,6 +92,8 @@ describe('useUserForm', () => {
       name: 'Grace Hopper Updated',
       email: 'grace@example.com',
       status: 'inactive',
+    }, {
+      mock: undefined,
     })
   })
 })

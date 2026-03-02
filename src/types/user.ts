@@ -10,6 +10,7 @@ export interface UsersQuery {
   page: number
   limit: number
   search?: string
+  mock?: 'empty' | 'slow' | 'error' | 'network'
 }
 
 export interface PaginatedResponse<T> {

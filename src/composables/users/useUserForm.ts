@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue'
 import { userClient } from '@/client/clients'
 import { useValidate } from '@/composables/common/useValidate'
 import type { AppError } from '@/types/api'
-import type { CreateUserPayload, UpdateUserPayload, User } from '@/types/user'
+import type { CreateUserPayload, UpdateUserPayload, User, UsersQuery } from '@/types/user'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -20,6 +20,7 @@ export interface UserFormValues {
 interface UseUserFormOptions {
   mode: UserFormMode
   userId?: string
+  mockScenario?: UsersQuery['mock']
 }
 
 const normalizeText = (value: string): string => value.trim()
@@ -37,7 +38,7 @@ const toCreatePayload = (form: UserFormValues): CreateUserPayload => ({
   createdAt: new Date().toISOString(),
 })
 
-export const useUserForm = ({ mode, userId }: UseUserFormOptions) => {
+export const useUserForm = ({ mode, userId, mockScenario }: UseUserFormOptions) => {
   const form = reactive<UserFormValues>({
     name: '',
     email: '',
@@ -86,7 +87,9 @@ export const useUserForm = ({ mode, userId }: UseUserFormOptions) => {
     isLoadingUser.value = true
     loadError.value = null
 
-    const result = await userClient.getUserById(userId)
+    const result = await userClient.getUserById(userId, {
+      mock: mockScenario,
+    })
 
     isLoadingUser.value = false
 
@@ -119,8 +122,12 @@ export const useUserForm = ({ mode, userId }: UseUserFormOptions) => {
 
     const result =
       mode === 'create'
-        ? await userClient.createUser(toCreatePayload(form))
-        : await userClient.updateUser(userId ?? '', toUpdatePayload(form))
+        ? await userClient.createUser(toCreatePayload(form), {
+            mock: mockScenario,
+          })
+        : await userClient.updateUser(userId ?? '', toUpdatePayload(form), {
+            mock: mockScenario,
+          })
 
     isSubmitting.value = false
 

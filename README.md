@@ -1,30 +1,30 @@
 # simourg
 
-Проект этапа 5: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend.
+Проект этапа 6: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend.
 
-## Что реализовано на этапе 5
+## Что реализовано на этапе 6
 
-- Изолированный client-layer:
-  - `src/client/axios` (axios instance + interceptors),
-  - `src/client/clients/base.client.ts` (единый transport),
-  - `src/client/clients/user.client.ts` (`list/getById/create/update`),
-  - `src/client/config/endpoints.ts` (централизованные endpoints).
-- Единый формат ошибок `ApiResult<T>` + `AppError` (`src/types/api.ts`).
-- UI не вызывает axios напрямую (`HealthCheckPage` использует `healthClient`).
-- Реализован users store со сценарием списка и серверной пагинацией/поиском.
-- Добавлена синхронизация `page/limit/search` с URL query на `/users`.
-- Добавлена универсальная форма пользователя для create/edit (`src/components/Users/UserForm.vue`).
-- Добавлен `useValidate` и формовый сценарий `useUserForm`.
-- Реализована валидация обязательных полей и формата email.
-- Mock backend валидирует `POST /users` и `PATCH /users/:id` (включая конфликт email).
-- Unit-тесты client-layer, routes и users store.
-- Unit-тесты composables валидации и формы.
+- UI-состояния списка пользователей: `loading`, `error`, `empty`, `success`.
+- UI-состояния формы пользователя: `loading user`, `load error`, `submit error`, `submitting`.
+- Переиспользуемые базовые компоненты:
+  - `src/components/Common/AppButton.vue`
+  - `src/components/Common/AppInput.vue`
+  - `src/components/Common/AppSelect.vue`
+  - `src/components/Common/AppLoader.vue`
+  - `src/components/Common/AppEmptyState.vue`
+- Страница `/users` использует `Common`-компоненты и поддерживает выбор mock-сценария.
+- Mock backend поддерживает технические сценарии для `/users` и `/users/:id` через query `mock`:
+  - `empty`
+  - `slow`
+  - `error`
+  - `network`
+- SCSS придерживается BEM-структуры по страницам и компонентам.
 
-## Маршруты этапа 2
+## Маршруты
 
-- `/users` - страница списка пользователей (каркас).
-- `/users/new` - страница создания пользователя (каркас).
-- `/users/:id/edit` - страница редактирования пользователя (каркас).
+- `/users` - список пользователей.
+- `/users/new` - создание пользователя.
+- `/users/:id/edit` - редактирование пользователя.
 
 ## Установка
 
@@ -68,14 +68,15 @@ curl http://localhost:3001/health
 { "status": "ok" }
 ```
 
-Проверка пагинации и поиска:
+### Проверка пагинации и поиска
 
 ```sh
 curl "http://localhost:3001/users?page=1&limit=5"
 curl "http://localhost:3001/users?page=2&limit=5"
 curl "http://localhost:3001/users?page=1&limit=5&search=grace"
+```
 
-Проверка create/edit:
+### Проверка create/edit
 
 ```sh
 curl -X POST "http://localhost:3001/users" \
@@ -87,12 +88,21 @@ curl -X PATCH "http://localhost:3001/users/1" \
   -d '{"name":"Ada Updated","email":"ada.updated@example.com","status":"inactive"}'
 ```
 
-Проверка серверной валидации:
+### Проверка серверной валидации
 
 ```sh
 curl -i -X POST "http://localhost:3001/users" \
   -H "Content-Type: application/json" \
   -d '{"name":"","email":"wrong","status":"unknown"}'
+```
+
+### Проверка UI-сценариев (этап 6)
+
+```sh
+curl "http://localhost:3001/users?page=1&limit=5&mock=empty"
+curl "http://localhost:3001/users?page=1&limit=5&mock=slow"
+curl -i "http://localhost:3001/users?page=1&limit=5&mock=error"
+curl -i "http://localhost:3001/users?page=1&limit=5&mock=network"
 ```
 
 ## Проверки качества

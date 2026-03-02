@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 
+import AppButton from '@/components/Common/AppButton.vue'
+import AppInput from '@/components/Common/AppInput.vue'
+import AppLoader from '@/components/Common/AppLoader.vue'
+import AppSelect from '@/components/Common/AppSelect.vue'
 import { useUserForm } from '@/composables/users/useUserForm'
-import type { User } from '@/types/user'
+import type { User, UsersQuery } from '@/types/user'
 
 const props = defineProps<{
   mode: 'create' | 'edit'
   userId?: string
+  mockScenario?: UsersQuery['mock']
 }>()
 
 const emit = defineEmits<{
@@ -23,7 +28,12 @@ const {
   loadUser,
   onBlur,
   submit,
-} = useUserForm({ mode: props.mode, userId: props.userId })
+} = useUserForm({ mode: props.mode, userId: props.userId, mockScenario: props.mockScenario })
+
+const statusOptions = [
+  { value: 'active', label: 'active' },
+  { value: 'inactive', label: 'inactive' },
+]
 
 const submitLabel = computed(() => (props.mode === 'create' ? 'Create user' : 'Save changes'))
 
@@ -44,6 +54,10 @@ const onSubmit = async (): Promise<void> => {
 
   emit('submitted', user)
 }
+
+const retryLoad = async (): Promise<void> => {
+  await loadUser()
+}
 </script>
 
 <template>
@@ -55,56 +69,47 @@ const onSubmit = async (): Promise<void> => {
       </p>
     </header>
 
-    <p v-if="isLoadingUser" class="user-form__status">Loading user data...</p>
-    <p v-else-if="loadError" class="user-form__status user-form__status--error">{{ loadError.message }}</p>
+    <AppLoader v-if="isLoadingUser" label="Loading user data..." />
+
+    <section v-else-if="loadError" class="user-form__feedback user-form__feedback--error">
+      <p class="user-form__feedback-title">Failed to load user</p>
+      <p class="user-form__feedback-text">{{ loadError.message }}</p>
+      <AppButton type="button" variant="secondary" @click="retryLoad">Retry</AppButton>
+    </section>
 
     <form v-else class="user-form__fields" @submit.prevent="onSubmit">
-      <label class="user-form__field">
-        <span class="user-form__label">Full name *</span>
-        <input
-          v-model="form.name"
-          class="user-form__input"
-          type="text"
-          autocomplete="name"
-          :disabled="isSubmitting"
-          @blur="onBlur('name')"
-        />
-        <span v-if="errors.name" class="user-form__error">{{ errors.name }}</span>
-      </label>
+      <AppInput
+        v-model="form.name"
+        label="Full name *"
+        autocomplete="name"
+        :disabled="isSubmitting"
+        :error="errors.name"
+        @blur="onBlur('name')"
+      />
 
-      <label class="user-form__field">
-        <span class="user-form__label">Email *</span>
-        <input
-          v-model="form.email"
-          class="user-form__input"
-          type="email"
-          autocomplete="email"
-          :disabled="isSubmitting"
-          @blur="onBlur('email')"
-        />
-        <span v-if="errors.email" class="user-form__error">{{ errors.email }}</span>
-      </label>
+      <AppInput
+        v-model="form.email"
+        label="Email *"
+        type="email"
+        autocomplete="email"
+        :disabled="isSubmitting"
+        :error="errors.email"
+        @blur="onBlur('email')"
+      />
 
-      <label class="user-form__field">
-        <span class="user-form__label">Status *</span>
-        <select
-          v-model="form.status"
-          class="user-form__select"
-          :disabled="isSubmitting"
-          @blur="onBlur('status')"
-        >
-          <option value="active">active</option>
-          <option value="inactive">inactive</option>
-        </select>
-        <span v-if="errors.status" class="user-form__error">{{ errors.status }}</span>
-      </label>
+      <AppSelect
+        v-model="form.status"
+        label="Status *"
+        :options="statusOptions"
+        :disabled="isSubmitting"
+        :error="errors.status"
+        @blur="onBlur('status')"
+      />
 
       <p v-if="submitError" class="user-form__status user-form__status--error">{{ submitError.message }}</p>
 
       <div class="user-form__actions">
-        <button class="user-form__button" type="submit" :disabled="isSubmitting">
-          {{ isSubmitting ? 'Saving...' : submitLabel }}
-        </button>
+        <AppButton type="submit" :loading="isSubmitting">{{ submitLabel }}</AppButton>
       </div>
     </form>
   </section>
@@ -130,41 +135,47 @@ const onSubmit = async (): Promise<void> => {
   color: #57606a;
 }
 
+.user-form__feedback {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid #ccd3da;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.user-form__feedback--error {
+  border-color: #e4b4b7;
+  background: #fff6f6;
+}
+
+.user-form__feedback-title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.user-form__feedback-text {
+  margin: 0;
+  color: #5d6671;
+}
+
 .user-form__fields {
   display: grid;
   gap: 14px;
   max-width: 520px;
 }
 
-.user-form__field {
-  display: grid;
-  gap: 6px;
-}
-
-.user-form__label {
-  font-size: 14px;
-  color: #24292f;
-}
-
-.user-form__input,
-.user-form__select,
-.user-form__button {
-  padding: 8px 10px;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  background: #ffffff;
-}
-
-.user-form__button {
-  width: fit-content;
-}
-
-.user-form__error,
-.user-form__status--error {
-  color: #d1242f;
-}
-
 .user-form__status {
   margin: 0;
+}
+
+.user-form__status--error {
+  color: #b4232a;
+}
+
+.user-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 </style>

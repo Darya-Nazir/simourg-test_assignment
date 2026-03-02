@@ -12,6 +12,7 @@ const DEFAULT_PAGE = 1
 const DEFAULT_LIMIT = 5
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const ALLOWED_STATUSES = new Set(['active', 'inactive'])
+const MOCK_SCENARIOS = new Set(['empty', 'slow', 'error', 'network'])
 
 const parsePositiveInt = (value, fallback) => {
   const parsed = Number.parseInt(String(value ?? ''), 10)
@@ -26,6 +27,7 @@ const normalizeText = (value) => String(value ?? '').trim()
 
 const normalizeEmail = (value) => normalizeText(value).toLowerCase()
 const createId = () => randomBytes(2).toString('hex')
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const validateUserPayload = (payload, { isPatch }) => {
   const name = normalizeText(payload.name)
@@ -57,6 +59,61 @@ const validateUserPayload = (payload, { isPatch }) => {
   return null
 }
 
+const resolveMockScenario = (req) => {
+  const url = new URL(req.url, 'http://localhost')
+  const isUsersRoute = url.pathname === '/users' || /^\/users\/[^/]+$/.test(url.pathname)
+
+  if (!isUsersRoute) {
+    return null
+  }
+
+  const value = (url.searchParams.get('mock') ?? '').trim()
+
+  if (!MOCK_SCENARIOS.has(value)) {
+    return null
+  }
+
+  return value
+}
+
+const handleMockScenario = async (req, res) => {
+  const scenario = resolveMockScenario(req)
+
+  if (!scenario) {
+    return false
+  }
+
+  if (scenario === 'slow') {
+    await sleep(1200)
+    return false
+  }
+
+  if (scenario === 'error') {
+    res.status(500).json({ message: 'Mock server error scenario is enabled.' })
+    return true
+  }
+
+  if (scenario === 'network') {
+    req.socket?.destroy()
+    return true
+  }
+
+  if (scenario === 'empty' && req.method === 'GET') {
+    res.status(200).json({
+      first: 1,
+      prev: null,
+      next: null,
+      last: 1,
+      pages: 1,
+      items: 0,
+      data: [],
+    })
+    return true
+  }
+
+  return false
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const dbPath = join(__dirname, 'db.json')
 
@@ -68,7 +125,11 @@ const jsonServerApp = createApp(db, { logger: false })
 const app = new App()
 app.use(json())
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+  if (await handleMockScenario(req, res)) {
+    return
+  }
+
   if (req.method !== 'POST' && req.method !== 'PATCH') {
     next?.()
     return
@@ -148,7 +209,11 @@ app.use((req, res, next) => {
   })
 })
 
-app.use((req, _res, next) => {
+app.use(async (req, res, next) => {
+  if (await handleMockScenario(req, res)) {
+    return
+  }
+
   if (req.method !== 'GET') {
     next?.()
     return
@@ -168,6 +233,7 @@ app.use((req, _res, next) => {
   url.searchParams.delete('page')
   url.searchParams.delete('limit')
   url.searchParams.delete('search')
+  url.searchParams.delete('mock')
 
   url.searchParams.set('_page', String(page))
   url.searchParams.set('_per_page', String(limit))
