@@ -1,8 +1,8 @@
 # simourg
 
-Проект этапа 4: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend.
+Проект этапа 5: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend.
 
-## Что реализовано на этапе 4
+## Что реализовано на этапе 5
 
 - Изолированный client-layer:
   - `src/client/axios` (axios instance + interceptors),
@@ -13,7 +13,12 @@
 - UI не вызывает axios напрямую (`HealthCheckPage` использует `healthClient`).
 - Реализован users store со сценарием списка и серверной пагинацией/поиском.
 - Добавлена синхронизация `page/limit/search` с URL query на `/users`.
+- Добавлена универсальная форма пользователя для create/edit (`src/components/Users/UserForm.vue`).
+- Добавлен `useValidate` и формовый сценарий `useUserForm`.
+- Реализована валидация обязательных полей и формата email.
+- Mock backend валидирует `POST /users` и `PATCH /users/:id` (включая конфликт email).
 - Unit-тесты client-layer, routes и users store.
+- Unit-тесты composables валидации и формы.
 
 ## Маршруты этапа 2
 
@@ -69,6 +74,25 @@ curl http://localhost:3001/health
 curl "http://localhost:3001/users?page=1&limit=5"
 curl "http://localhost:3001/users?page=2&limit=5"
 curl "http://localhost:3001/users?page=1&limit=5&search=grace"
+
+Проверка create/edit:
+
+```sh
+curl -X POST "http://localhost:3001/users" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"New User","email":"new.user@example.com","status":"active"}'
+
+curl -X PATCH "http://localhost:3001/users/1" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Ada Updated","email":"ada.updated@example.com","status":"inactive"}'
+```
+
+Проверка серверной валидации:
+
+```sh
+curl -i -X POST "http://localhost:3001/users" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"","email":"wrong","status":"unknown"}'
 ```
 
 ## Проверки качества

@@ -35,6 +35,15 @@ describe('Users routes', () => {
       },
       error: null,
     })
+    vi.spyOn(userClient, 'getUserById').mockResolvedValue({
+      data: {
+        id: 7,
+        name: 'Grace Hopper',
+        email: 'grace@example.com',
+        status: 'active',
+      },
+      error: null,
+    })
 
     const router = createTestRouter()
     router.push('/users')

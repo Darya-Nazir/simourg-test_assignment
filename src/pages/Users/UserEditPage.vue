@@ -1,25 +1,20 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+
+import UserForm from '@/components/Users/UserForm.vue'
+import { ROUTE_NAMES } from '@/router/routes'
 
 const route = useRoute()
+const router = useRouter()
+
 const userId = computed(() => String(route.params.id ?? ''))
+
+const onSubmitted = async (): Promise<void> => {
+  await router.push({ name: ROUTE_NAMES.USERS_LIST })
+}
 </script>
 
 <template>
-  <section class="user-edit-page">
-    <h2 class="user-edit-page__title">Edit User</h2>
-    <p class="user-edit-page__description">Editing user with id: {{ userId }}</p>
-  </section>
+  <UserForm mode="edit" :user-id="userId" @submitted="onSubmitted" />
 </template>
-
-<style scoped lang="scss">
-.user-edit-page__title {
-  margin: 0;
-}
-
-.user-edit-page__description {
-  margin: 12px 0 0;
-  color: #57606a;
-}
-</style>
