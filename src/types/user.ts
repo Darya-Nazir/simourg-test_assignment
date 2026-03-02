@@ -7,9 +7,19 @@ export interface User {
 }
 
 export interface UsersQuery {
-  page?: number
-  limit?: number
+  page: number
+  limit: number
   search?: string
+}
+
+export interface PaginatedResponse<T> {
+  first: number
+  prev: number | null
+  next: number | null
+  last: number
+  pages: number
+  items: number
+  data: T[]
 }
 
 export type CreateUserPayload = Pick<User, 'name'> &

@@ -1,8 +1,10 @@
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { createPinia } from 'pinia'
+import { describe, expect, it, vi } from 'vitest'
 
 import App from '@/App.vue'
+import { userClient } from '@/client/clients'
 import { ROUTE_NAMES, appRoutes } from '@/router/routes'
 
 const createTestRouter = () =>
@@ -21,13 +23,26 @@ describe('Users routes', () => {
   })
 
   it('renders all pages when navigating between routes', async () => {
+    vi.spyOn(userClient, 'getUsers').mockResolvedValue({
+      data: {
+        first: 1,
+        prev: null,
+        next: null,
+        last: 1,
+        pages: 1,
+        items: 0,
+        data: [],
+      },
+      error: null,
+    })
+
     const router = createTestRouter()
     router.push('/users')
     await router.isReady()
 
     const wrapper = mount(App, {
       global: {
-        plugins: [router],
+        plugins: [createPinia(), router],
       },
     })
 

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { apiAxios } from '@/client/axios'
 import { userClient } from '@/client/clients'
-import type { CreateUserPayload, UpdateUserPayload, User } from '@/types/user'
+import type { CreateUserPayload, PaginatedResponse, UpdateUserPayload, User } from '@/types/user'
 
 describe('userClient', () => {
   beforeEach(() => {
@@ -11,10 +11,18 @@ describe('userClient', () => {
   })
 
   it('loads users list via GET /users', async () => {
-    const responseData: User[] = [{ id: 1, name: 'Alice' }]
+    const responseData: PaginatedResponse<User> = {
+      first: 1,
+      prev: null,
+      next: 2,
+      last: 3,
+      pages: 3,
+      items: 15,
+      data: [{ id: 1, name: 'Alice' }],
+    }
     const getSpy = vi
       .spyOn(apiAxios, 'get')
-      .mockResolvedValue({ data: responseData } as AxiosResponse<User[]>)
+      .mockResolvedValue({ data: responseData } as AxiosResponse<PaginatedResponse<User>>)
 
     const result = await userClient.getUsers({ page: 1, limit: 10, search: 'ali' })
 
@@ -66,7 +74,7 @@ describe('userClient', () => {
 
     vi.spyOn(apiAxios, 'get').mockRejectedValue(axiosError)
 
-    const result = await userClient.getUsers()
+    const result = await userClient.getUsers({ page: 1, limit: 10 })
 
     expect(result.data).toBeNull()
     expect(result.error).toEqual({

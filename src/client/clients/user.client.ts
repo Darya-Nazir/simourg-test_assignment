@@ -1,12 +1,18 @@
 import { API_ENDPOINTS } from '@/client/config'
 import type { ApiResult } from '@/types/api'
-import type { CreateUserPayload, UpdateUserPayload, User, UsersQuery } from '@/types/user'
+import type {
+  CreateUserPayload,
+  PaginatedResponse,
+  UpdateUserPayload,
+  User,
+  UsersQuery,
+} from '@/types/user'
 
 import { BaseClient } from './base.client'
 
 class UserClient extends BaseClient {
-  getUsers(query?: UsersQuery): Promise<ApiResult<User[]>> {
-    return this.get<User[]>(API_ENDPOINTS.USERS, { params: query })
+  getUsers(query: UsersQuery): Promise<ApiResult<PaginatedResponse<User>>> {
+    return this.get<PaginatedResponse<User>>(API_ENDPOINTS.USERS, { params: query })
   }
 
   getUserById(id: string | number): Promise<ApiResult<User>> {

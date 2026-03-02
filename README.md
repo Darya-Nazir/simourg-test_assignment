@@ -1,8 +1,8 @@
 # simourg
 
-Проект этапа 3: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend (json-server).
+Проект этапа 4: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend.
 
-## Что реализовано на этапе 3
+## Что реализовано на этапе 4
 
 - Изолированный client-layer:
   - `src/client/axios` (axios instance + interceptors),
@@ -10,8 +10,10 @@
   - `src/client/clients/user.client.ts` (`list/getById/create/update`),
   - `src/client/config/endpoints.ts` (централизованные endpoints).
 - Единый формат ошибок `ApiResult<T>` + `AppError` (`src/types/api.ts`).
-- UI больше не вызывает axios напрямую (`HealthCheckPage` переведен на `healthClient`).
-- Unit-тесты client-layer на success/error и HTTP-методы.
+- UI не вызывает axios напрямую (`HealthCheckPage` использует `healthClient`).
+- Реализован users store со сценарием списка и серверной пагинацией/поиском.
+- Добавлена синхронизация `page/limit/search` с URL query на `/users`.
+- Unit-тесты client-layer, routes и users store.
 
 ## Маршруты этапа 2
 
@@ -59,6 +61,14 @@ curl http://localhost:3001/health
 
 ```json
 { "status": "ok" }
+```
+
+Проверка пагинации и поиска:
+
+```sh
+curl "http://localhost:3001/users?page=1&limit=5"
+curl "http://localhost:3001/users?page=2&limit=5"
+curl "http://localhost:3001/users?page=1&limit=5&search=grace"
 ```
 
 ## Проверки качества

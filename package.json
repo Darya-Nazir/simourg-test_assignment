@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "mock": "json-server --watch mock/db.json --port 3001",
+    "mock": "node mock/server.mjs",
     "dev:all": "run-p dev mock",
     "build": "run-p typecheck \"build-only {@}\" --",
     "preview": "vite preview",
