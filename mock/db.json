@@ -1,0 +1,11 @@
+{
+  "health": {
+    "status": "ok"
+  },
+  "users": [
+    {
+      "id": 1,
+      "name": "stub-user"
+    }
+  ]
+}
