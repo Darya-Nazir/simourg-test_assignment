@@ -9,7 +9,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 type UserFormMode = 'create' | 'edit'
 
-type UserStatus = 'active' | 'inactive'
+type UserStatus = 'active' | 'blocked'
 
 export interface UserFormValues {
   name: string
@@ -60,14 +60,14 @@ export const useUserForm = ({ mode, userId, mockScenario }: UseUserFormOptions) 
         EMAIL_REGEX.test(normalizeText(value)) ? null : 'Email must have a valid format (example: user@example.com).',
     ],
     status: [
-      (value) => (value === 'active' || value === 'inactive' ? null : 'Status is required.'),
+      (value) => (value === 'active' || value === 'blocked' ? null : 'Status is required.'),
     ],
   })
 
   const setFromUser = (user: User): void => {
     form.name = user.name ?? ''
     form.email = user.email ?? ''
-    form.status = user.status === 'inactive' ? 'inactive' : 'active'
+    form.status = user.status === 'blocked' ? 'blocked' : 'active'
   }
 
   const loadUser = async (): Promise<boolean> => {

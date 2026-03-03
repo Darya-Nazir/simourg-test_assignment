@@ -9,6 +9,7 @@ import AppInput from '@/components/Common/AppInput.vue'
 import AppLoader from '@/components/Common/AppLoader.vue'
 import AppSelect from '@/components/Common/AppSelect.vue'
 import type { AppSelectOption } from '@/components/Common/AppSelect.vue'
+import { ROUTE_NAMES } from '@/router/routes'
 import { useUsersStore } from '@/stores/users'
 
 const LIMIT_OPTIONS: AppSelectOption[] = [
@@ -118,7 +119,50 @@ const retryFetch = async (): Promise<void> => {
 }
 
 const statusClass = (value: string | undefined): string => {
-  return value === 'active' ? 'users-list-page__status users-list-page__status--active' : 'users-list-page__status'
+  if (value === 'active') {
+    return 'users-list-page__status users-list-page__status--active'
+  }
+
+  return value === 'blocked'
+    ? 'users-list-page__status users-list-page__status--blocked'
+    : 'users-list-page__status'
+}
+
+const statusLabel = (value: string | undefined): string => {
+  if (value === 'active') {
+    return 'Активен'
+  }
+
+  if (value === 'blocked') {
+    return 'Заблокирован'
+  }
+
+  return '-'
+}
+
+const formatCreatedAt = (value: string | undefined): string => {
+  if (!value) {
+    return '-'
+  }
+
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return '-'
+  }
+
+  return new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date)
+}
+
+const goToUserEditPage = async (userId: number): Promise<void> => {
+  await router.push({
+    name: ROUTE_NAMES.USERS_EDIT,
+    params: { id: userId },
+  })
 }
 
 watch(
@@ -199,19 +243,29 @@ watch(
         <table class="users-list-page__table">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>ID</th>
+              <th>ФИО</th>
               <th>Email</th>
-              <th>Status</th>
+              <th>Дата регистрации</th>
+              <th>Статус</th>
+              <th>Действия</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="user in items" :key="user.id">
+              <td class="users-list-page__id">{{ user.id }}</td>
               <td>{{ user.name }}</td>
               <td>{{ user.email || '-' }}</td>
+              <td>{{ formatCreatedAt(user.createdAt) }}</td>
               <td>
                 <span :class="statusClass(user.status)">
-                  {{ user.status || '-' }}
+                  {{ statusLabel(user.status) }}
                 </span>
+              </td>
+              <td class="users-list-page__actions">
+                <AppButton type="button" variant="secondary" :disabled="isLoading" @click="goToUserEditPage(user.id)">
+                  Редактировать
+                </AppButton>
               </td>
             </tr>
           </tbody>
@@ -387,6 +441,20 @@ watch(
 .users-list-page__status--active {
   color: #0e7a49;
   background: #d8f1e4;
+}
+
+.users-list-page__status--blocked {
+  color: #8b1f26;
+  background: #f8e0e2;
+}
+
+.users-list-page__id {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.users-list-page__actions {
+  white-space: nowrap;
 }
 
 @media (max-width: 920px) {

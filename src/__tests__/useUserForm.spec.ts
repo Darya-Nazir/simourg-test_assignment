@@ -70,7 +70,7 @@ describe('useUserForm', () => {
         id: 7,
         name: 'Grace Hopper Updated',
         email: 'grace@example.com',
-        status: 'inactive',
+        status: 'blocked',
       },
       error: null,
     })
@@ -83,15 +83,15 @@ describe('useUserForm', () => {
     expect(formApi.form.name).toBe('Grace Hopper')
 
     formApi.form.name = 'Grace Hopper Updated'
-    formApi.form.status = 'inactive'
+    formApi.form.status = 'blocked'
 
     const result = await formApi.submit()
 
-    expect(result?.status).toBe('inactive')
+    expect(result?.status).toBe('blocked')
     expect(updateSpy).toHaveBeenCalledWith('7', {
       name: 'Grace Hopper Updated',
       email: 'grace@example.com',
-      status: 'inactive',
+      status: 'blocked',
     }, {
       mock: undefined,
     })

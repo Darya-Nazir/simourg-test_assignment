@@ -31,8 +31,8 @@ const {
 } = useUserForm({ mode: props.mode, userId: props.userId, mockScenario: props.mockScenario })
 
 const statusOptions = [
-  { value: 'active', label: 'active' },
-  { value: 'inactive', label: 'inactive' },
+  { value: 'active', label: 'Активен' },
+  { value: 'blocked', label: 'Заблокирован' },
 ]
 
 const submitLabel = computed(() => (props.mode === 'create' ? 'Create user' : 'Save changes'))

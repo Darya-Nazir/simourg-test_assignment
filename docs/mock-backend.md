@@ -42,7 +42,7 @@ For `POST /users` and `PATCH /users/:id`:
 
 - `name` is required;
 - `email` is required and validated by regex;
-- `status` is required and must be `active` or `inactive`;
+- `status` is required and must be `active` or `blocked`;
 - `email` must be unique (otherwise `409`).
 
 ## Data
@@ -94,7 +94,7 @@ curl -i --max-time 3 "http://127.0.0.1:3001/users?page=1&limit=5&mock=network"
 
 - `name` обязателен;
 - `email` обязателен и проверяется regex;
-- `status` обязателен и должен быть `active` или `inactive`;
+- `status` обязателен и должен быть `active` или `blocked`;
 - `email` должен быть уникальным (иначе `409`).
 
 ## Данные

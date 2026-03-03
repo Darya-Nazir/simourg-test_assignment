@@ -11,7 +11,7 @@ import { json } from 'milliparsec'
 const DEFAULT_PAGE = 1
 const DEFAULT_LIMIT = 5
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const ALLOWED_STATUSES = new Set(['active', 'inactive'])
+const ALLOWED_STATUSES = new Set(['active', 'blocked'])
 const MOCK_SCENARIOS = new Set(['empty', 'slow', 'error', 'network'])
 
 const parsePositiveInt = (value, fallback) => {
@@ -52,7 +52,7 @@ const validateUserPayload = (payload, { isPatch }) => {
 
   if (!isPatch || 'status' in payload) {
     if (!ALLOWED_STATUSES.has(status)) {
-      return 'Status is required and must be active or inactive.'
+      return 'Status is required and must be active or blocked.'
     }
   }
 

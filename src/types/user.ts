@@ -2,7 +2,7 @@ export interface User {
   id: number
   name: string
   email?: string
-  status?: 'active' | 'inactive'
+  status?: 'active' | 'blocked'
   createdAt?: string
 }
 
