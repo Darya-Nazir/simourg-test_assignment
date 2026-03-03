@@ -118,35 +118,41 @@ const retryLoad = async (): Promise<void> => {
 <style scoped lang="scss">
 .user-form {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .user-form__header {
   display: grid;
-  gap: 6px;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(216, 222, 230, 0.92);
 }
 
 .user-form__title {
   margin: 0;
+  font-size: clamp(22px, 2.3vw, 30px);
+  letter-spacing: -0.02em;
 }
 
 .user-form__description {
   margin: 0;
-  color: #57606a;
+  color: var(--slate);
 }
 
 .user-form__feedback {
   display: grid;
-  gap: 10px;
-  padding: 16px;
-  border: 1px solid #ccd3da;
-  border-radius: 10px;
-  background: #fff;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.87);
 }
 
 .user-form__feedback--error {
-  border-color: #e4b4b7;
-  background: #fff6f6;
+  border-color: #efc6c8;
+  background: #fff4f5;
 }
 
 .user-form__feedback-title {
@@ -156,26 +162,40 @@ const retryLoad = async (): Promise<void> => {
 
 .user-form__feedback-text {
   margin: 0;
-  color: #5d6671;
+  color: var(--slate);
 }
 
 .user-form__fields {
   display: grid;
   gap: 14px;
-  max-width: 520px;
+  max-width: 600px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(216, 222, 230, 0.95);
+  box-shadow: var(--shadow-card);
 }
 
 .user-form__status {
   margin: 0;
+  font-weight: 600;
 }
 
 .user-form__status--error {
-  color: #b4232a;
+  color: var(--danger);
 }
 
 .user-form__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+@media (max-width: 680px) {
+  .user-form__header,
+  .user-form__fields,
+  .user-form__feedback {
+    padding: 14px;
+  }
 }
 </style>

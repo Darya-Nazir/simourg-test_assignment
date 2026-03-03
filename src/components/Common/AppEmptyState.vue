@@ -23,22 +23,22 @@ withDefaults(
 <style scoped lang="scss">
 .app-empty-state {
   display: grid;
-  gap: 8px;
-  padding: 20px;
-  border: 1px dashed #ccd3da;
-  border-radius: 12px;
-  background: #fff;
+  gap: 10px;
+  padding: 22px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.86);
 }
 
 .app-empty-state__title {
   margin: 0;
-  font-size: 17px;
-  color: #1f2328;
+  font-size: 18px;
+  color: var(--ink);
 }
 
 .app-empty-state__description {
   margin: 0;
-  color: #5d6671;
+  color: var(--slate);
 }
 
 .app-empty-state__actions {

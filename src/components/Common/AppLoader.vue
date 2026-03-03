@@ -21,14 +21,18 @@ withDefaults(
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #3d444d;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  color: var(--slate);
 }
 
 .app-loader__spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #ccd3da;
-  border-top-color: #0f4c81;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(15, 23, 32, 0.2);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: app-loader-spin 0.8s linear infinite;
 }

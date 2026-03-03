@@ -117,6 +117,10 @@ const retryFetch = async (): Promise<void> => {
   await usersStore.fetchUsers()
 }
 
+const statusClass = (value: string | undefined): string => {
+  return value === 'active' ? 'users-list-page__status users-list-page__status--active' : 'users-list-page__status'
+}
+
 watch(
   () => route.query,
   async (query) => {
@@ -204,7 +208,11 @@ watch(
             <tr v-for="user in items" :key="user.id">
               <td>{{ user.name }}</td>
               <td>{{ user.email || '-' }}</td>
-              <td>{{ user.status || '-' }}</td>
+              <td>
+                <span :class="statusClass(user.status)">
+                  {{ user.status || '-' }}
+                </span>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -238,28 +246,39 @@ watch(
 <style scoped lang="scss">
 .users-list-page {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .users-list-page__header {
   display: grid;
-  gap: 6px;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(216, 222, 230, 0.9);
 }
 
 .users-list-page__title {
   margin: 0;
+  font-size: clamp(22px, 2.3vw, 30px);
+  letter-spacing: -0.02em;
 }
 
 .users-list-page__description {
   margin: 0;
-  color: #57606a;
+  color: var(--slate);
 }
 
 .users-list-page__filters {
   display: grid;
   grid-template-columns: 1.2fr repeat(2, minmax(160px, 220px)) auto;
-  gap: 12px;
+  gap: 14px;
   align-items: end;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(216, 222, 230, 0.95);
+  box-shadow: var(--shadow-card);
 }
 
 .users-list-page__filter-item--search {
@@ -274,16 +293,16 @@ watch(
 
 .users-list-page__feedback {
   display: grid;
-  gap: 8px;
-  padding: 16px;
-  border-radius: 10px;
-  border: 1px solid #ccd3da;
-  background: #fff;
+  gap: 10px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.87);
 }
 
 .users-list-page__feedback--error {
-  border-color: #e4b4b7;
-  background: #fff6f6;
+  border-color: #efc6c8;
+  background: #fff4f5;
 }
 
 .users-list-page__feedback-title,
@@ -292,7 +311,7 @@ watch(
 }
 
 .users-list-page__feedback-text {
-  color: #5d6671;
+  color: var(--slate);
 }
 
 .users-list-page__feedback-actions {
@@ -303,43 +322,77 @@ watch(
 
 .users-list-page__content {
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 
 .users-list-page__table {
   width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #d0d7de;
-  border-radius: 10px;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-card);
 }
 
 .users-list-page__table th,
 .users-list-page__table td {
   text-align: left;
-  padding: 10px 12px;
-  border-bottom: 1px solid #d8dee4;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e7ebf0;
+}
+
+.users-list-page__table thead th {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slate);
+  background: #f7f8fa;
 }
 
 .users-list-page__table tr:last-child td {
   border-bottom: 0;
 }
 
+.users-list-page__table tbody tr:hover {
+  background: #fff9f6;
+}
+
 .users-list-page__pagination {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
+  padding: 6px 2px;
 }
 
 .users-list-page__page-indicator {
-  color: #57606a;
+  color: var(--slate);
+  font-weight: 600;
+}
+
+.users-list-page__status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #677689;
+  background: #edf1f5;
+}
+
+.users-list-page__status--active {
+  color: #0e7a49;
+  background: #d8f1e4;
 }
 
 @media (max-width: 920px) {
   .users-list-page__filters {
     grid-template-columns: 1fr;
+    padding: 14px;
   }
 }
 </style>

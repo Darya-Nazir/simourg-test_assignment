@@ -56,46 +56,47 @@ const onClick = (event: MouseEvent): void => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 38px;
-  padding: 8px 14px;
+  min-height: 42px;
+  padding: 10px 18px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 999px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .app-button--primary {
-  background: #0f4c81;
-  border-color: #0f4c81;
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
+  box-shadow: 0 8px 18px rgba(255, 107, 61, 0.28);
 }
 
 .app-button--primary:hover:not(:disabled) {
-  background: #0c406d;
-  border-color: #0c406d;
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
 }
 
 .app-button--secondary {
-  background: #fff;
-  border-color: #ccd3da;
-  color: #1f2328;
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--ink);
 }
 
 .app-button--secondary:hover:not(:disabled) {
-  background: #f3f5f7;
+  border-color: var(--accent);
+  color: var(--accent-dark);
 }
 
 .app-button--danger {
-  background: #b4232a;
-  border-color: #b4232a;
+  background: var(--danger);
+  border-color: var(--danger);
   color: #fff;
 }
 
 .app-button--danger:hover:not(:disabled) {
-  background: #991b21;
-  border-color: #991b21;
+  filter: brightness(0.92);
 }
 
 .app-button--block {
@@ -103,8 +104,13 @@ const onClick = (event: MouseEvent): void => {
 }
 
 .app-button:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
+  box-shadow: none;
+}
+
+.app-button:not(:disabled):active {
+  transform: translateY(1px);
 }
 
 .app-button__spinner {
@@ -117,8 +123,8 @@ const onClick = (event: MouseEvent): void => {
 }
 
 .app-button--secondary .app-button__spinner {
-  border-color: rgba(31, 35, 40, 0.25);
-  border-top-color: #1f2328;
+  border-color: rgba(15, 23, 32, 0.2);
+  border-top-color: var(--ink);
 }
 
 .app-button__label {
