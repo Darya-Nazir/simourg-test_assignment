@@ -1,24 +1,84 @@
 # simourg
 
-Проект этапа 6: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend.
+Test task `users`: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend.
 
-## Что реализовано на этапе 6
+## Implemented
 
-- UI-состояния списка пользователей: `loading`, `error`, `empty`, `success`.
-- UI-состояния формы пользователя: `loading user`, `load error`, `submit error`, `submitting`.
-- Переиспользуемые базовые компоненты:
-  - `src/components/Common/AppButton.vue`
-  - `src/components/Common/AppInput.vue`
-  - `src/components/Common/AppSelect.vue`
-  - `src/components/Common/AppLoader.vue`
-  - `src/components/Common/AppEmptyState.vue`
-- Страница `/users` использует `Common`-компоненты и поддерживает выбор mock-сценария.
-- Mock backend поддерживает технические сценарии для `/users` и `/users/:id` через query `mock`:
-  - `empty`
-  - `slow`
-  - `error`
-  - `network`
-- SCSS придерживается BEM-структуры по страницам и компонентам.
+- Domain-driven architecture for `users` with split layers: `pages/components/composables/stores/client/types`.
+- Users list with server-side `page/limit/search` and URL query synchronization.
+- Unified create/edit form with validation and error handling.
+- Single API client layer (`base client` + `user client`) with no direct `axios` calls from UI.
+- UI states `loading/error/empty/success` for list and form.
+- BEM-based SCSS and reusable common components.
+- Mock backend with business and technical acceptance scenarios.
+- Unit tests for key logic: `client`, `store`, `validation`, `form`, `routes`.
+
+## Routes
+
+- `/users` - users list.
+- `/users/new` - user creation.
+- `/users/:id/edit` - user editing.
+
+## Requirements
+
+- Node.js: `^20.19.0 || >=22.12.0`.
+- npm: any version compatible with Node.
+
+## Installation
+
+```sh
+npm install
+```
+
+## Run
+
+Two terminals:
+
+```sh
+npm run mock
+npm run dev
+```
+
+Single command:
+
+```sh
+npm run dev:all
+```
+
+## Quality Commands
+
+```sh
+npm run typecheck
+npm run test
+npm run build
+```
+
+## Quick API Check
+
+```sh
+curl "http://127.0.0.1:3001/health"
+curl "http://127.0.0.1:3001/users?page=1&limit=5"
+curl "http://127.0.0.1:3001/users?page=1&limit=5&search=grace"
+```
+
+More details about mock scenarios:
+
+- [docs/mock-backend.md](docs/mock-backend.md)
+
+------------------------------------------------------------
+
+Тестовое задание `users`: Vue 3 + TypeScript + Pinia + Vue Router + axios + mock backend.
+
+## Что реализовано
+
+- Архитектура по доменному срезу (`users`) с разделением `pages/components/composables/stores/client/types`.
+- Список пользователей с серверными `page/limit/search` и синхронизацией query-параметров URL.
+- Универсальная форма create/edit с валидацией и обработкой ошибок.
+- Единый клиентский слой API (`base client` + `user client`) без прямых вызовов `axios` из UI.
+- UI-состояния `loading/error/empty/success` для списка и формы.
+- BEM-структура SCSS и переиспользуемые общие компоненты.
+- Mock backend с бизнес и техническими сценариями для приемки.
+- Unit-тесты ключевой логики: `client`, `store`, `validation`, `form`, `routes`.
 
 ## Маршруты
 
@@ -26,88 +86,48 @@
 - `/users/new` - создание пользователя.
 - `/users/:id/edit` - редактирование пользователя.
 
+## Требования
+
+- Node.js: `^20.19.0 || >=22.12.0`.
+- npm: любой совместимый с Node.
+
 ## Установка
 
 ```sh
 npm install
 ```
 
-## Запуск разработки
+## Запуск
 
-Нужно запускать и фронт, и mock-бэкенд.
-
-### Вариант 1: двумя терминалами
-
-Терминал 1 (mock backend):
+Вариант с двумя терминалами:
 
 ```sh
 npm run mock
-```
-
-Терминал 2 (frontend):
-
-```sh
 npm run dev
 ```
 
-### Вариант 2: одной командой
+Вариант одной командой:
 
 ```sh
 npm run dev:all
 ```
 
-## Проверка mock backend
-
-```sh
-curl http://localhost:3001/health
-```
-
-Ожидаемый ответ:
-
-```json
-{ "status": "ok" }
-```
-
-### Проверка пагинации и поиска
-
-```sh
-curl "http://localhost:3001/users?page=1&limit=5"
-curl "http://localhost:3001/users?page=2&limit=5"
-curl "http://localhost:3001/users?page=1&limit=5&search=grace"
-```
-
-### Проверка create/edit
-
-```sh
-curl -X POST "http://localhost:3001/users" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"New User","email":"new.user@example.com","status":"active"}'
-
-curl -X PATCH "http://localhost:3001/users/1" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Ada Updated","email":"ada.updated@example.com","status":"inactive"}'
-```
-
-### Проверка серверной валидации
-
-```sh
-curl -i -X POST "http://localhost:3001/users" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"","email":"wrong","status":"unknown"}'
-```
-
-### Проверка UI-сценариев (этап 6)
-
-```sh
-curl "http://localhost:3001/users?page=1&limit=5&mock=empty"
-curl "http://localhost:3001/users?page=1&limit=5&mock=slow"
-curl -i "http://localhost:3001/users?page=1&limit=5&mock=error"
-curl -i "http://localhost:3001/users?page=1&limit=5&mock=network"
-```
-
-## Проверки качества
+## Команды качества
 
 ```sh
 npm run typecheck
 npm run test
+npm run build
 ```
+
+## Быстрая проверка API
+
+```sh
+curl "http://127.0.0.1:3001/health"
+curl "http://127.0.0.1:3001/users?page=1&limit=5"
+curl "http://127.0.0.1:3001/users?page=1&limit=5&search=grace"
+```
+
+Дополнительно по mock-сценариям:
+
+- [docs/mock-backend.md](docs/mock-backend.md)
